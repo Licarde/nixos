@@ -9,8 +9,15 @@
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     nixos-hardware.url = "github:NixOS/nixos-hardware";
-#   home-manager.url = "github:nix-community/home-manager";
     hyprland.url = "github:hyprwm/Hyprland";
+    home-manager = {
+      url = "github:nix-community/home-manager";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    nixvim = {
+      url = "github:nix-community/nixvim";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs =
@@ -27,13 +34,13 @@
           ./configuration.nix
           ./nix/substituter.nix
           nixos-hardware.nixosModules.apple-t2
-#         home-manager.nixosModules.home-manager
-#         {
-#           home-manager.useGlobalPkgs = true;
-#           home-manager.useUserPackages = true;
-#           home-manager.extraSpecialArgs = { inherit inputs; };
-#           home-manager.users.riorio = ./home.nix;
-#         }
+          home-manager.nixosModules.home-manager
+          {
+            home-manager.useGlobalPkgs = true;
+            home-manager.useUserPackages = true;
+            home-manager.extraSpecialArgs = { inherit inputs; };
+            home-manager.users.riorio = ./home.nix;
+          }
         ];
       };
     };
