@@ -31,7 +31,17 @@
   };
 
   # Configure network connections interactively with nmcli or nmtui.
-  networking.networkmanager.enable = true;
+  networking.wireless = {
+  # disable wpa_supplicant
+  enable = false;
+  # enable iwd
+  iwd.enable = true;
+  };
+  # enable NM
+  networking.networkmanager = {
+    enable = true;
+    wifi.backend = "iwd";
+  };
 
   # Set your time zone.
   time.timeZone = "Asia/Tokyo";
@@ -98,9 +108,13 @@
   # Hyprland Policykit Agent
   # services.hyprpolkitagent.enable = true;
 
-  programs.foot = {
-    enable = true;
-  };
+# programs.foot = {
+#   enable = true;
+# };
+
+# programs.nixvim = {
+#   enable = true;
+# };
 
   # List packages installed in system profile.
   # You can use https://search.nixos.org/ to find more packages (and options).
