@@ -17,8 +17,6 @@
   boot.loader.efi.canTouchEfiVariables = true;
   boot.zfs.forceImportRoot =false;
   boot.supportedFilesystems = [ "zfs" ];
-  boot.extraModprobeConfig = " options brcmfmac feature_disable=0x82000 ";
-  boot.blacklistedKernelModules = [ "hci_bcm4377" ];
 
   networking.hostName = "hakkaa"; # Define your hostname.
   networking.hostId = "02dc5b26";
@@ -30,17 +28,43 @@
     experimental-features = [ "nix-command" "flakes" ];
   };
 
+
+  # Broadcom Wi-Fi settings
+
+  hardware.firmware = [
+    (pkgs.stdenvNoCC.mkDerivation (final: {
+      name = "brcm-firmware";
+      src = ./firmware.tar;
+
+      dontUnpack = true;
+      installPhase = ''
+        mkdir -p $out/lib/firmware/brcm
+        tar -xf ${final.src} -C $out/lib/firmware/brcm
+      '';
+    }))
+  ];
+
+  boot.extraModprobeConfig = " options brcmfmac feature_disable=0x82000 ";
+  boot.blacklistedKernelModules = [ "hci_bcm4377" ];
+
   # Configure network connections interactively with nmcli or nmtui.
   networking.wireless = {
-  # disable wpa_supplicant
-  enable = false;
-  # enable iwd
-  iwd.enable = true;
+    # disable wpa_supplicant
+    enable = false;
+    iwd.enable = true;
   };
-  # enable NM
   networking.networkmanager = {
     enable = true;
     wifi.backend = "iwd";
+  };
+
+
+  # Define a user account. Don't forget to set a password with ‘passwd’.
+  users.users.riorio = {
+    isNormalUser = true;
+    extraGroups = [ "wheel" "networkmanager" ]; # Enable sudo and NM
+    packages = with pkgs; [
+    ];
   };
 
   # Set your time zone.
@@ -71,7 +95,6 @@
 
   # Enable sound.
   services.pulseaudio.enable = false;
-  # OR
   services.pipewire = {
     enable = true;
     pulse.enable = true;
@@ -80,13 +103,6 @@
   # Enable touchpad support (enabled default in most desktopManager).
   services.libinput.enable = true;
 
-  # Define a user account. Don't forget to set a password with ‘passwd’.
-  users.users.riorio = {
-    isNormalUser = true;
-    extraGroups = [ "wheel" ]; # Enable ‘sudo’ for the user.
-    packages = with pkgs; [
-    ];
-  };
 
 
   # programs.firefox.enable = true;
