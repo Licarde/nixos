@@ -60,7 +60,9 @@
   # Define a user account. Don't forget to set a password with ‘passwd’.
   users.users.riorio = {
     isNormalUser = true;
-    extraGroups = [ "wheel" "networkmanager" ]; # sudo と NetworkManager
+    # dialout はマイコンボードのシリアルポート（/dev/ttyUSB* /dev/ttyACM*）用。
+    # 追加後は一度ログインし直さないと反映されない。
+    extraGroups = [ "wheel" "networkmanager" "dialout" ]; # sudo / NetworkManager / シリアル
     packages = with pkgs; [
     ];
   };
@@ -134,6 +136,10 @@
 
   # Enable touchpad support (enabled default in most desktopManager).
   services.libinput.enable = true;
+
+  # マイコンボードを非 root で扱うための udev ルール。
+  # 開発環境自体は ~/Arduino_nyuumon の devShell 側にある。
+  services.udev.packages = [ pkgs.platformio-core.udev ];
 
 
   # Hyprland の設定
