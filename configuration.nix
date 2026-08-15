@@ -5,7 +5,6 @@
     [ # Include the results of the hardware scan.
       ./hardware-configuration.nix
       ./desktop/hypr.nix
-      ./t2AppleAudioDSP.nix
     ];
 
   # Use the systemd-boot EFI boot loader.
@@ -32,7 +31,6 @@
     (pkgs.stdenvNoCC.mkDerivation (final: {
       name = "brcm-firmware";
       src = ./firmware.tar;
-
       dontUnpack = true;
       installPhase = ''
         mkdir -p $out/lib/firmware/brcm
@@ -41,7 +39,11 @@
     }))
   ];
 
-  boot.extraModprobeConfig = " options brcmfmac feature_disable=0x82000 ";
+  # NOTE: dropped `options brcmfmac feature_disable=0x82000`. The parameter does
+  # not exist in the 6.18 driver -- the boot log showed
+  # "brcmfmac: unknown parameter 'feature' ignored", and the only parameters
+  # exposed under /sys/module/brcmfmac/parameters are alternative_fw_path,
+  # debug and roamoff. It had no effect.
   boot.blacklistedKernelModules = [ "hci_bcm4377" ];
 
   # Configure network connections interactively with nmcli or nmtui.
@@ -104,15 +106,7 @@
   };
 
 
-  i18n.inputMethod = {
-    enabled = "fcitx5";
-    fcitx5.addons = with pkgs; [
-      fcitx5-mozc
-    ];
-  };
-
-
-  # Enable the X11 windowing system.
+  # Enable the X11 windowing system. nessesary for LightDM
   services.xserver.enable = true;
 
   
@@ -132,11 +126,11 @@
     alsa.support32Bit = true;
     pulse.enable = true;
   };
-
-  t2AppleAudioDSP = {
-    enable = true;
-    model = "9_1";
-  };
+  boot.kernelParams = [
+    "intel_iommu=on"
+    "iommu=pt"
+    "pm_async=off"
+  ];
 
   # Enable touchpad support (enabled default in most desktopManager).
   services.libinput.enable = true;
@@ -158,6 +152,12 @@
   };
   # Hyprland Policykit Agent
   # services.hyprpolkitagent.enable = true;
+
+  programs.niri.enable = true;
+  programs.mango.enable = true;
+
+
+
 
   # List packages installed in system profile.
   # You can use https://search.nixos.org/ to find more packages (and options).
