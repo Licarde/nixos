@@ -15,7 +15,7 @@
 
   networking.hostName = "hakkaa"; # Define your hostname.
   networking.hostId = "02dc5b26";
-  # nix settings
+  # nix の設定
   nix.settings = {
     substituters = [ "https://hyprland.cachix.org" ];
     trusted-substituters = [ "https://hyprland.cachix.org" ];
@@ -24,7 +24,7 @@
   };
 
 
-  # Broadcom Wi-Fi settings
+  # Broadcom Wi-Fi のファームウェア
 
   hardware.firmware = [
     (pkgs.stdenvNoCC.mkDerivation (final: {
@@ -38,16 +38,16 @@
     }))
   ];
 
-  # NOTE: dropped `options brcmfmac feature_disable=0x82000`. The parameter does
-  # not exist in the 6.18 driver -- the boot log showed
-  # "brcmfmac: unknown parameter 'feature' ignored", and the only parameters
-  # exposed under /sys/module/brcmfmac/parameters are alternative_fw_path,
-  # debug and roamoff. It had no effect.
+  # 注意: `options brcmfmac feature_disable=0x82000` は削除した。6.18 の
+  # ドライバにこのパラメータは存在せず、起動ログに
+  # "brcmfmac: unknown parameter 'feature' ignored" が出ていた。
+  # /sys/module/brcmfmac/parameters にあるのは alternative_fw_path と
+  # debug と roamoff だけで、この設定は効いていなかった。
   boot.blacklistedKernelModules = [ "hci_bcm4377" ];
 
-  # Configure network connections interactively with nmcli or nmtui.
+  # ネットワーク接続は nmcli / nmtui で対話的に設定する。
   networking.wireless = {
-    # disable wpa_supplicant
+    # wpa_supplicant は使わず iwd を使う
     enable = false;
     iwd.enable = true;
   };
@@ -60,7 +60,7 @@
   # Define a user account. Don't forget to set a password with ‘passwd’.
   users.users.riorio = {
     isNormalUser = true;
-    extraGroups = [ "wheel" "networkmanager" ]; # Enable sudo and NM
+    extraGroups = [ "wheel" "networkmanager" ]; # sudo と NetworkManager
     packages = with pkgs; [
     ];
   };
@@ -89,10 +89,11 @@
     keyboards.default = {
       ids = [ "*" ];
       settings = {
+        # JIS 固有キーを US 配列で使えるように潰す
         main = {
-	  ro = "grave";
-	  yen = "backslash";
-	};
+          ro = "grave";
+          yen = "backslash";
+        };
       };
     };
   };
@@ -105,7 +106,7 @@
   };
 
 
-  # Enable the X11 windowing system. nessesary for LightDM
+  # X11。LightDM を使うために必要
   services.xserver.enable = true;
 
   
@@ -135,7 +136,7 @@
   services.libinput.enable = true;
 
 
-  # Hyprland Settings
+  # Hyprland の設定
   programs.hyprland = {
     enable = true;
     withUWSM = true;
@@ -149,9 +150,9 @@
   hardware = {
     graphics.enable = true;
   };
-  # Hyprland Policykit Agent: configured in home-manager (home.nix). There is no
-  # services.hyprpolkitagent option on the NixOS side, only in home-manager.
-  # programs.hyprland already turns on security.polkit.
+  # polkit 認証エージェントは home.nix 側で設定している。
+  # services.hyprpolkitagent は NixOS 側に存在せず home-manager 専用。
+  # security.polkit 自体は programs.hyprland が有効にする。
 
   programs.niri.enable = true;
   programs.mango.enable = true;

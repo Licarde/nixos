@@ -22,7 +22,8 @@
 
       formatter.x86_64-linux = nixpkgs.legacyPackages.x86_64-linux.nixfmt-rfc-style;
 
-      # replace yourHostname with your actual hostname!
+      # specialArgs で inputs を渡しているので、各モジュールから
+      # inputs.hyprland のように flake input を直接参照できる。
       nixosConfigurations.hakkaa = nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
         specialArgs = { inherit inputs; };
@@ -30,7 +31,7 @@
           ./configuration.nix
           ./nix/substituter.nix
           nixos-hardware.nixosModules.apple-t2
-	  mangowm.nixosModules.mango
+          mangowm.nixosModules.mango
         ];
       };
     };
