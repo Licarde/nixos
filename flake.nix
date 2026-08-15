@@ -10,14 +10,14 @@
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     nixos-hardware.url = "github:NixOS/nixos-hardware";
     hyprland.url = "github:hyprwm/Hyprland";
-    nixvim = {
-      url = "github:nix-community/nixvim";
+    mangowm = {
+      url = "github:mangowm/mango";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
 
   outputs =
-    inputs@{ nixpkgs, nixos-hardware, home-manager, nixvim, ... }:
+    inputs@{ nixpkgs, nixos-hardware, mangowm, ... }:
     {
 
       formatter.x86_64-linux = nixpkgs.legacyPackages.x86_64-linux.nixfmt-rfc-style;
@@ -30,7 +30,7 @@
           ./configuration.nix
           ./nix/substituter.nix
           nixos-hardware.nixosModules.apple-t2
-          nixvim.nixosModules.nixvim
+	  mangowm.nixosModules.mango
         ];
       };
     };

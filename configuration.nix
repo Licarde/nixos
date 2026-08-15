@@ -1,7 +1,3 @@
-# Edit this configuration file to define what should be installed on
-# your system. Help is available in the configuration.nix(5) man page, on
-# https://search.nixos.org/options and in the NixOS manual (`nixos-help`).
-#
 { config, lib, pkgs, inputs, ... }:
 
 {
@@ -9,6 +5,7 @@
     [ # Include the results of the hardware scan.
       ./hardware-configuration.nix
       ./desktop/hypr.nix
+      ./t2AppleAudioDSP.nix
     ];
 
   # Use the systemd-boot EFI boot loader.
@@ -74,12 +71,46 @@
   # networking.proxy.default = "http://user:password@proxy:port/";
   # networking.proxy.noProxy = "127.0.0.1,localhost,internal.domain";
 
+
+
+
   # Select internationalisation properties.
+  fonts.packages = with pkgs; [
+    noto-fonts
+    noto-fonts-cjk-sans
+    noto-fonts-cjk-serif
+    noto-fonts-color-emoji
+    ipafont
+  ];
+
+  services.keyd = {
+    enable = true;
+    keyboards.default = {
+      ids = [ "*" ];
+      settings = {
+        main = {
+	  ro = "grave";
+	  yen = "backslash";
+	};
+      };
+    };
+  };
+  systemd.services.keyd.wantedBy = [ "multi-user.target" ];
+
   i18n.defaultLocale = "ja_JP.UTF-8";
   console = {
     font = "Lat2-Terminus16";
     useXkbConfig = true; # use xkb.options in tty.
   };
+
+
+  i18n.inputMethod = {
+    enabled = "fcitx5";
+    fcitx5.addons = with pkgs; [
+      fcitx5-mozc
+    ];
+  };
+
 
   # Enable the X11 windowing system.
   services.xserver.enable = true;
@@ -97,15 +128,19 @@
   services.pulseaudio.enable = false;
   services.pipewire = {
     enable = true;
+    alsa.enable = true;
+    alsa.support32Bit = true;
     pulse.enable = true;
+  };
+
+  t2AppleAudioDSP = {
+    enable = true;
+    model = "9_1";
   };
 
   # Enable touchpad support (enabled default in most desktopManager).
   services.libinput.enable = true;
 
-
-
-  # programs.firefox.enable = true;
 
   # Hyprland Settings
   programs.hyprland = {
@@ -123,14 +158,6 @@
   };
   # Hyprland Policykit Agent
   # services.hyprpolkitagent.enable = true;
-
-# programs.foot = {
-#   enable = true;
-# };
-
-# programs.nixvim = {
-#   enable = true;
-# };
 
   # List packages installed in system profile.
   # You can use https://search.nixos.org/ to find more packages (and options).
