@@ -141,6 +141,12 @@
   # 開発環境自体は ~/Arduino_nyuumon の devShell 側にある。
   services.udev.packages = [ pkgs.platformio-core.udev ];
 
+  # 電池残量。noctalia のバッテリーウィジェットは sysfs を直接読まず
+  # org.freedesktop.UPower の D-Bus だけを見ており、デバイスが 1 つも
+  # 返らないとウィジェット自体を非表示にする。upower を上げないと
+  # /sys/class/power_supply/BAT0 があってもバーに何も出ない。
+  services.upower.enable = true;
+
 
   # Hyprland の設定
   programs.hyprland = {
