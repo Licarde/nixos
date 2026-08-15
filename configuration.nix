@@ -95,6 +95,11 @@
         main = {
           ro = "grave";
           yen = "backslash";
+          # Apple JIS の 英数 は HID の LANG2 で、Linux では KEY_HANJA として
+          # 飛ぶ。これを無変換に付け替えて mozc の SwitchKanaType
+          # （ひらがな → カタカナ → 半角カナ）に使う。IME の ON/OFF は
+          # かな（KEY_HANGEUL）1 つに寄せた。home.nix の fcitx5 側と対。
+          hanja = "muhenkan";
         };
       };
     };
