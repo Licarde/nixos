@@ -4,7 +4,6 @@
   imports =
     [ # Include the results of the hardware scan.
       ./hardware-configuration.nix
-      ./desktop/hypr.nix
     ];
 
   # Use the systemd-boot EFI boot loader.
@@ -150,8 +149,9 @@
   hardware = {
     graphics.enable = true;
   };
-  # Hyprland Policykit Agent
-  # services.hyprpolkitagent.enable = true;
+  # Hyprland Policykit Agent: configured in home-manager (home.nix). There is no
+  # services.hyprpolkitagent option on the NixOS side, only in home-manager.
+  # programs.hyprland already turns on security.polkit.
 
   programs.niri.enable = true;
   programs.mango.enable = true;
