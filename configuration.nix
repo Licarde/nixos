@@ -24,37 +24,8 @@
   };
 
 
-  # Broadcom Wi-Fi のファームウェア
-
-  hardware.firmware = [
-    (pkgs.stdenvNoCC.mkDerivation (final: {
-      name = "brcm-firmware";
-      src = ./firmware.tar;
-      dontUnpack = true;
-      installPhase = ''
-        mkdir -p $out/lib/firmware/brcm
-        tar -xf ${final.src} -C $out/lib/firmware/brcm
-      '';
-    }))
-  ];
-
-  # 注意: `options brcmfmac feature_disable=0x82000` は削除した。6.18 の
-  # ドライバにこのパラメータは存在せず、起動ログに
-  # "brcmfmac: unknown parameter 'feature' ignored" が出ていた。
-  # /sys/module/brcmfmac/parameters にあるのは alternative_fw_path と
-  # debug と roamoff だけで、この設定は効いていなかった。
-  boot.blacklistedKernelModules = [ "hci_bcm4377" ];
-
-  # ネットワーク接続は nmcli / nmtui で対話的に設定する。
-  networking.wireless = {
-    # wpa_supplicant は使わず iwd を使う
-    enable = false;
-    iwd.enable = true;
-  };
-  networking.networkmanager = {
-    enable = true;
-    wifi.backend = "iwd";
-  };
+  # Broadcom Wi-Fi（ファームウェア、iwd、BT の blacklist）は
+  # hardware/broadcom-wifi.nix に分離した。
 
 
   # Define a user account. Don't forget to set a password with ‘passwd’.

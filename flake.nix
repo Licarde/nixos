@@ -29,6 +29,7 @@
         specialArgs = { inherit inputs; };
         modules = [
           ./configuration.nix
+          ./hardware/broadcom-wifi.nix
           ./nix/substituter.nix
           nixos-hardware.nixosModules.apple-t2
           mangowm.nixosModules.mango
