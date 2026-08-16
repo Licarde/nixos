@@ -28,11 +28,13 @@
   # Bluetooth 用のファームウェアも tar に入っているが使っていない。
   boot.blacklistedKernelModules = [ "hci_bcm4377" ];
 
-  # 注意: `options brcmfmac feature_disable=0x82000` は削除した。6.18 の
-  # ドライバにこのパラメータは存在せず、起動ログに
-  # "brcmfmac: unknown parameter 'feature' ignored" が出ていた。
-  # /sys/module/brcmfmac/parameters にあるのは alternative_fw_path と
-  # debug と roamoff だけで、この設定は効いていなかった。
+  # 注意: `options brcmfmac feature_disable=0x82000` は削除した。あれは
+  # wpa_supplicant を使うと P2P 関連のエラーが出るのを避けるための設定で、
+  # iwd に切り替えた今は不要。加えて 6.18 のドライバにこのパラメータ自体が
+  # 存在せず、起動ログに "brcmfmac: unknown parameter 'feature' ignored" が
+  # 出ていた。/sys/module/brcmfmac/parameters にあるのは alternative_fw_path と
+  # debug と roamoff だけ。バックエンドを wpa_supplicant に戻すことがあれば
+  # P2P エラーの方は再発しうる。
 
   # ネットワーク接続は nmcli / nmtui で対話的に設定する。
   networking.wireless = {
