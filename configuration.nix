@@ -12,10 +12,17 @@
   boot.loader.efi.canTouchEfiVariables = true;
   # EFI パーティションが 300MB しかない。世代ごとに kernel 13MB +
   # initrd 44MB が ESP にコピーされる（同じ store パスなら 1 つに共有）ので、
-  # 放っておくと埋まる。ブートメニューに残す世代を 10 に制限する。
+  # 放っておくと埋まる。5 本にすると 2026-08-16 時点で 210MB → 112MB。
+  #
+  # 3 本まで削ると kernel が 1 種類だけになり、カーネル更新で起動しなく
+  # なったときにブートメニューから戻れなくなる。**2 種類は残す**のが下限。
+  # 逆に、同じカーネルのまま 5 回 switch すると 5 本とも同じ kernel に
+  # なるので、`nix flake update` でカーネルが上がる前後は注意する。
+  #
   # 注意: これは ESP のエントリを減らすだけで、/nix/var/nix/profiles の
-  # 世代自体は残る。store の容量を空けるにはガベージコレクションが要る。
-  boot.loader.systemd-boot.configurationLimit = 10;
+  # 世代自体は残る。稼働中のシステムからのロールバックは引き続きできるし、
+  # store の容量を空けるにはガベージコレクションが別途要る。
+  boot.loader.systemd-boot.configurationLimit = 5;
   boot.zfs.forceImportRoot =false;
   boot.supportedFilesystems = [ "zfs" ];
 
