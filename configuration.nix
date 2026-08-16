@@ -92,12 +92,32 @@
   };
 
 
-  # X11。LightDM を使うために必要
-  services.xserver.enable = true;
+  # ディスプレイマネージャは greetd + tuigreet。
+  #
+  # 以前は LightDM のためだけに X11 サーバを上げていたが、セッションは
+  # すべて Wayland（hyprland / niri / mango）なので X11 は落とした。
+  # XWayland は programs.hyprland.xwayland が用意するもので、
+  # services.xserver とは無関係なので影響しない。
+  services.greetd = {
+    enable = true;
+    # 起動メッセージが TUI に被らないよう systemd 側の tty 設定を調整する
+    useTextGreeter = true;
+    settings.default_session = {
+      command = builtins.concatStringsSep " " [
+        # tuigreet は pkgs.greetd.tuigreet ではなくトップレベルにある
+        "${pkgs.tuigreet}/bin/tuigreet"
+        "--time"
+        "--remember"
+        "--remember-user-session"
+        "--asterisks"
+        "--sessions ${config.services.displayManager.sessionData.desktops}/share/wayland-sessions"
+      ];
+      user = "greeter";
+    };
+  };
 
-  
-
-  # Configure keymap in X11
+  # キーレイアウト。services.xserver.enable が false でも、この値は
+  # console.useXkbConfig から参照されるので消さない。
   services.xserver.xkb.layout = "us";
   # services.xserver.xkb.options = "eurosign:e,caps:escape";
 
