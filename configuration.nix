@@ -10,6 +10,12 @@
   boot.loader.efi.efiSysMountPoint = "/boot";
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
+  # EFI パーティションが 300MB しかない。世代ごとに kernel 13MB +
+  # initrd 44MB が ESP にコピーされる（同じ store パスなら 1 つに共有）ので、
+  # 放っておくと埋まる。ブートメニューに残す世代を 10 に制限する。
+  # 注意: これは ESP のエントリを減らすだけで、/nix/var/nix/profiles の
+  # 世代自体は残る。store の容量を空けるにはガベージコレクションが要る。
+  boot.loader.systemd-boot.configurationLimit = 10;
   boot.zfs.forceImportRoot =false;
   boot.supportedFilesystems = [ "zfs" ];
 
