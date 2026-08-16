@@ -29,6 +29,7 @@
         specialArgs = { inherit inputs; };
         modules = [
           ./configuration.nix
+          ./hardware/apple-t2-audio.nix
           ./hardware/broadcom-wifi.nix
           ./nix/substituter.nix
           nixos-hardware.nixosModules.apple-t2

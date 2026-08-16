@@ -91,19 +91,9 @@
   # Enable CUPS to print documents.
   # services.printing.enable = true;
 
-  # Enable sound.
-  services.pulseaudio.enable = false;
-  services.pipewire = {
-    enable = true;
-    alsa.enable = true;
-    alsa.support32Bit = true;
-    pulse.enable = true;
-  };
-  boot.kernelParams = [
-    "intel_iommu=on"
-    "iommu=pt"
-    "pm_async=off"
-  ];
+  # 音声（PipeWire と T2 固有の profile-set）は
+  # hardware/apple-t2-audio.nix に分離した。
+  # kernelParams も apple-t2 モジュールが同じものを設定するのでここには置かない。
 
   # Enable touchpad support (enabled default in most desktopManager).
   services.libinput.enable = true;
