@@ -79,6 +79,26 @@
         main = {
           ro = "grave";
           yen = "backslash";
+
+          # Apple JIS の かな / 英数 は HID の LANG1 / LANG2 で、Linux では
+          # KEY_HANGEUL / KEY_HANJA として飛ぶ。XKB の us 配列では
+          # symbols/pc がこれを Hangul / Hangul_Hanja に割り当てる。
+          #
+          # ところが fcitx5 はこの 2 つを韓国語 IME 用のキーとして自前で
+          # 握っていて、Hotkey/ActivateKeys に Hangul を入れても ON 専用に
+          # ならず、押すたびにトグルする。2026-08-17 に実測した挙動は
+          # OFF の状態から かな→ON、かな→OFF、英数→ON。英数側は
+          # そもそも Hotkey/DeactivateKeys が Hangul_Romaja という
+          # どのレイアウトも生成しない keysym を指していて未接続だった。
+          #
+          # そこで JIS の かな / 無変換 に付け替え、Hiragana_Katakana /
+          # Muhenkan という素直な keysym で fcitx5 に拾わせる。キーの役割
+          # （かな=IME ON、英数=IME OFF）は変えていない。home.nix の
+          # fcitx5 側の Hotkey/ActivateKeys・DeactivateKeys と対。
+          #
+          # keyd には KEY_HENKAN に対応する名前が無いので、変換側は使わない。
+          hangeul = "katakanahiragana";
+          hanja = "muhenkan";
         };
       };
     };
